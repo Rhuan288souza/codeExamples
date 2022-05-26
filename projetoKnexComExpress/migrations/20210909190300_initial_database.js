@@ -1,0 +1,65 @@
+exports.up = (knex) => {
+	return knex.schema
+		.createTable('usuarios', (table) => {
+			table.increments('id')
+			table.string('nome', 100).notNullable()
+			table.string('email', 30).notNullable()
+			table.string('senha', 20).notNullable()
+			table.string('estado_login', 20).notNullable()
+			table.date('data_cadastro').notNullable()
+			table.string('cpf', 11).notNullable()
+		})
+		.createTable('enderecos', (table) => {
+			table.increments('id')
+			table.string('logradouro', 100).notNullable()
+			table.integer('numero').notNullable()
+			table.string('complemento', 100).notNullable()
+			table.string('bairro', 30).notNullable()
+			table.string('cidade', 30).notNullable()
+			table.string('estado', 20).notNullable()
+		})
+		.createTable('pesquisadores', (table) => {
+			table.increments('id')
+			table.string('instituicao', 100).notNullable()
+			table.string('departamento', 40).notNullable()
+			table.string('lattes', 40).notNullable()
+			table.string('telefone', 40).notNullable()
+			table.integer('id_endereco').references('id')
+				.inTable('enderecos')
+			table.integer('id_usuario').references('id')
+				.inTable('usuarios')
+		})
+		.createTable('projetos', (table) => {
+			table.increments('id')
+			table.date('prazo').notNullable()
+			table.string('area', 30).notNullable()
+			table.string('resumo', 300).notNullable()
+			table.string('responsavel', 100).notNullable()
+			table.string('local_experimento', 100).notNullable()
+			table.string('objetivo', 100).notNullable()
+			table.string('justificativa', 100).notNullable()
+			table.string('relevancia', 100).notNullable()
+			table.string('animal', 100).notNullable()
+			table.string('procedimento', 100).notNullable()
+			table.integer('id_pesquisadores').references('id')
+				.inTable('pesquisadores')
+		})
+		.createTable('ata', (table) => {
+			table.increments('id')
+			table.date('data_reuniao').notNullable()
+			table.string('reuniao', 30).notNullable()
+		})
+	.then(resolve => console.log("Migrations realizadas com sucesso."))
+	.catch(error => console.log(error))
+}
+
+exports.down = (knex) => {
+	return knex.schema
+		.dropTable("ata")
+		.dropTable("projetos")
+		.dropTable("pesquisadores")
+		.dropTable("enderecos")
+		.dropTable("usuarios")
+	.then(resolve => console.log("Migrations deletadas com sucesso."))
+	.catch(error => console.log(error))
+}
